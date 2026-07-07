@@ -1,1 +1,13 @@
-
+{
+  "name": "lisolette-bot",
+  "version": "1.0.0",
+  "description": "Bot de Discord para asistencia de Mudae",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.21.0",
+    "dotenv": "^16.6.1"
+  }
+}
