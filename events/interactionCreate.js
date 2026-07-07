@@ -1,35 +1,45 @@
-const { Events } = require("discord.js");
+const {
+  Events,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+} = require("discord.js");
 
 module.exports = {
   name: Events.InteractionCreate,
 
   async execute(interaction) {
-    if (!interaction.isChatInputCommand()) return;
 
-    if (interaction.commandName === "ayuda") {
+    if (interaction.isChatInputCommand() && interaction.commandName === "ayuda") {
+
+      const botones = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId("mudae")
+          .setLabel("🎴 Mudae")
+          .setStyle(ButtonStyle.Primary),
+
+        new ButtonBuilder()
+          .setCustomId("kakera")
+          .setLabel("💎 Kakera")
+          .setStyle(ButtonStyle.Success)
+      );
+
       await interaction.reply({
-        embeds: [
-          {
-            color: 0xff69b4,
-            title: "🌸 Lisolette",
-            description: "¡Hola! Soy tu asistente para Mudae.",
-            fields: [
-              {
-                name: "📚 Disponible",
-                value: "`/ayuda` - Muestra este menú.",
-              },
-              {
-                name: "🚧 Próximamente",
-                value:
-                  "💎 Kakera\n❤️ Wishlist\n🎴 Mudae\n⏰ Recordatorios\n⚙️ Configuración",
-              },
-            ],
-            footer: {
-              text: "Lisolette • Asistente para Mudae",
-            },
-          },
-        ],
+        content: "🌸 **Lisolette**\n\nSelecciona una opción:",
+        components: [botones],
       });
+    }
+
+    if (interaction.isButton()) {
+
+      if (interaction.customId === "mudae") {
+        await interaction.reply("🎴 Guía de Mudae (próximamente).");
+      }
+
+      if (interaction.customId === "kakera") {
+        await interaction.reply("💎 Guía de Kakera (próximamente).");
+      }
+
     }
   },
 };
