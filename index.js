@@ -5,7 +5,6 @@ const path = require("path");
 
 const {
   Client,
-  Collection,
   GatewayIntentBits,
   REST,
   Routes,
@@ -13,10 +12,11 @@ const {
 } = require("discord.js");
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers
+  ],
 });
-
-client.commands = new Collection();
 
 // Registrar comandos
 const commands = [
@@ -28,12 +28,12 @@ const commands = [
 
 const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
 
-// Cargar eventos
+// Cargar eventos automáticamente
 const eventsPath = path.join(__dirname, "events");
 const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith(".js"));
 
 for (const file of eventFiles) {
-  const event = require(`./events/${file}`);
+  const event = require(path.join(eventsPath, file));
 
   if (event.once) {
     client.once(event.name, (...args) => event.execute(...args));
@@ -42,7 +42,6 @@ for (const file of eventFiles) {
   }
 }
 
-// Registrar comandos cuando el bot inicie
 client.once("ready", async () => {
   try {
     await rest.put(
