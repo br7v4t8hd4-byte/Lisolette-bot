@@ -18,8 +18,8 @@ client.once(Events.ClientReady, async (readyClient) => {
 
   const commands = [
     new SlashCommandBuilder()
-      .setName("ping")
-      .setDescription("Comprueba si el bot está en línea.")
+      .setName("ayuda")
+      .setDescription("Muestra el panel de ayuda de Lisolette.")
       .toJSON(),
   ];
 
@@ -27,21 +27,39 @@ client.once(Events.ClientReady, async (readyClient) => {
 
   try {
     await rest.put(
-     Routes.applicationCommands("1523894542191956081") ,
+      Routes.applicationCommands("1523894542191956081"),
       { body: commands }
     );
 
-    console.log("✅ Comando /ping registrado.");
-  } catch (err) {
-    console.error(err);
+    console.log("✅ Comando /ayuda registrado.");
+  } catch (error) {
+    console.error(error);
   }
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
-  if (interaction.commandName === "ping") {
-    await interaction.reply("🏓 ¡Pong! Lisolette está funcionando.");
+  if (interaction.commandName === "ayuda") {
+    await interaction.reply({
+      content: `# 🌸 Lisolette
+
+¡Hola! Soy tu asistente para Mudae.
+
+## 📚 Comandos disponibles
+
+📖 /ayuda - Muestra este menú.
+
+🚧 Próximamente:
+• Mudae
+• Kakera
+• Wishlist
+• Badges
+• FAQ
+• Eventos
+
+✨ Gracias por usar Lisolette.`,
+    });
   }
 });
 
