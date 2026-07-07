@@ -27,7 +27,7 @@ client.once(Events.ClientReady, async (readyClient) => {
 
   try {
     await rest.put(
-      Routes.applicationCommands("1523894542191956081"),
+     Routes.applicationCommands("1523894542191956081") ,
       { body: commands }
     );
 
