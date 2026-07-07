@@ -1,18 +1,13 @@
-require("dotenv").config();
-
-const { Client, GatewayIntentBits, Events } = require("discord.js");
-
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildMembers
-  ]
-});
-
-client.once(Events.ClientReady, (client) => {
-  console.log(`🌸 ${client.user.tag} está en línea.`);
-});
-
-client.login(process.env.TOKEN);
+{
+  "name": "lisolette-bot",
+  "version": "1.0.0",
+  "description": "Bot de Discord para asistencia de Mudae",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.21.0",
+    "dotenv": "^16.6.1"
+  }
+}
