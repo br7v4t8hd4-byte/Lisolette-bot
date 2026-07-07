@@ -1,9 +1,12 @@
 require("dotenv").config();
 
+const fs = require("fs");
+const path = require("path");
+
 const {
   Client,
+  Collection,
   GatewayIntentBits,
-  Events,
   REST,
   Routes,
   SlashCommandBuilder,
@@ -13,53 +16,43 @@ const client = new Client({
   intents: [GatewayIntentBits.Guilds],
 });
 
-client.once(Events.ClientReady, async (readyClient) => {
-  console.log(`🌸 ${readyClient.user.tag} está en línea.`);
+client.commands = new Collection();
 
-  const commands = [
-    new SlashCommandBuilder()
-      .setName("ayuda")
-      .setDescription("Muestra el panel de ayuda de Lisolette.")
-      .toJSON(),
-  ];
+// Registrar comandos
+const commands = [
+  new SlashCommandBuilder()
+    .setName("ayuda")
+    .setDescription("Muestra el panel de ayuda de Lisolette.")
+    .toJSON(),
+];
 
-  const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
+const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
 
+// Cargar eventos
+const eventsPath = path.join(__dirname, "events");
+const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith(".js"));
+
+for (const file of eventFiles) {
+  const event = require(`./events/${file}`);
+
+  if (event.once) {
+    client.once(event.name, (...args) => event.execute(...args));
+  } else {
+    client.on(event.name, (...args) => event.execute(...args));
+  }
+}
+
+// Registrar comandos cuando el bot inicie
+client.once("ready", async () => {
   try {
     await rest.put(
       Routes.applicationCommands("1523894542191956081"),
       { body: commands }
     );
 
-    console.log("✅ Comando /ayuda registrado.");
+    console.log("✅ Comandos registrados.");
   } catch (error) {
     console.error(error);
-  }
-});
-
-client.on(Events.InteractionCreate, async (interaction) => {
-  if (!interaction.isChatInputCommand()) return;
-
-  if (interaction.commandName === "ayuda") {
-    await interaction.reply({
-      content: `# 🌸 Lisolette
-
-¡Hola! Soy tu asistente para Mudae.
-
-## 📚 Comandos disponibles
-
-📖 /ayuda - Muestra este menú.
-
-🚧 Próximamente:
-• Mudae
-• Kakera
-• Wishlist
-• Badges
-• FAQ
-• Eventos
-
-✨ Gracias por usar Lisolette.`,
-    });
   }
 });
 
